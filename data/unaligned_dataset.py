@@ -33,8 +33,8 @@ class UnalignedDataset(BaseDataset):
         btoA = self.opt.direction == 'BtoA'
         input_nc = self.opt.output_nc if btoA else self.opt.input_nc       # get the number of channels of input image
         output_nc = self.opt.input_nc if btoA else self.opt.output_nc      # get the number of channels of output image
-        self.transform_A = get_transform(self.opt, grayscale=(input_nc == 1))
-        self.transform_B = get_transform(self.opt, grayscale=(output_nc == 1))
+        self.transform_A = get_transform(self.opt, grayscale=(input_nc == 1))   # get specified transforms for A
+        self.transform_B = get_transform(self.opt, grayscale=(output_nc == 1))  # get specified transforms for B
 
     def __getitem__(self, index):
         """Return a data point and its metadata information.
@@ -54,11 +54,33 @@ class UnalignedDataset(BaseDataset):
         else:   # randomize the index for domain B to avoid fixed pairs.
             index_B = random.randint(0, self.B_size - 1)
         B_path = self.B_paths[index_B]
-        A_img = Image.open(A_path).convert('RGB')
-        B_img = Image.open(B_path).convert('RGB')
-        # apply image transformation
+
+
+        # A_img = Image.open(A_path).convert('RGB')
+        # B_img = Image.open(B_path).convert('RGB')
+
+
+
+
+        print("Loading np arrays")
+
+        # Modified for np array loading rather than image conversion
+        A_img = np.load(A_path)
+        B_img = np.load(B_path)
+
+
+        print(type(A_img))
+        print(A_img)
+
+
+
+
+
+        # apply image transformation (but not really, since we're not using images), just leaving for code consistency
+        print("Applying transforms")
         A = self.transform_A(A_img)
         B = self.transform_B(B_img)
+        print("Transforms success!")
 
         return {'A': A, 'B': B, 'A_paths': A_path, 'B_paths': B_path}
 

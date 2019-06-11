@@ -33,7 +33,14 @@ def save_images(webpage, visuals, image_path, aspect_ratio=1.0, width=256):
     ims, txts, links = [], [], []
 
     for label, im_data in visuals.items():
-        im = util.tensor2im(im_data)
+
+
+        im = util.tensor2im(im_data) # CONVERSION OF TENSOR TO IMAGE
+
+        print("Type of 'im': , in the save images phase")
+        print(type(im))
+
+
         image_name = '%s_%s.png' % (name, label)
         save_path = os.path.join(image_dir, image_name)
         h, w, _ = im.shape
@@ -41,7 +48,10 @@ def save_images(webpage, visuals, image_path, aspect_ratio=1.0, width=256):
             im = imresize(im, (h, int(w * aspect_ratio)), interp='bicubic')
         if aspect_ratio < 1.0:
             im = imresize(im, (int(h / aspect_ratio), w), interp='bicubic')
-        util.save_image(im, save_path)
+
+
+
+        util.save_image(im, save_path) # TODO: Actually saving the image, this needs to be changed
 
         ims.append(image_name)
         txts.append(label)

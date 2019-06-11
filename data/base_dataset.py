@@ -95,7 +95,10 @@ def get_transform(opt, params=None, grayscale=False, method=Image.BICUBIC, conve
             transform_list.append(transforms.Lambda(lambda img: __crop(img, params['crop_pos'], opt.crop_size)))
 
     if opt.preprocess == 'none':
-        transform_list.append(transforms.Lambda(lambda img: __make_power_2(img, base=4, method=method)))
+        # transform_list.append(transforms.Lambda(lambda img: __make_power_2(img, base=4, method=method)))
+
+        # no default transforms wanted since its not an image
+        pass
 
     if not opt.no_flip:
         if params is None:
@@ -104,11 +107,12 @@ def get_transform(opt, params=None, grayscale=False, method=Image.BICUBIC, conve
             transform_list.append(transforms.Lambda(lambda img: __flip(img, params['flip'])))
 
     if convert:
-        transform_list += [transforms.ToTensor()]
+        transform_list += [transforms.ToTensor()] # CONVERSION TO TENSOR HERE
         if grayscale:
             transform_list += [transforms.Normalize((0.5,), (0.5,))]
         else:
-            transform_list += [transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
+            # Transform normalize for 4 channels, is this right?
+            transform_list += [transforms.Normalize((0.5, 0.5, 0.5, 0.5), (0.5, 0.5, 0.5, 0.5))] # -> 4 channels
     return transforms.Compose(transform_list)
 
 
