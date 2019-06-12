@@ -3,6 +3,10 @@ from data.base_dataset import BaseDataset, get_transform
 from data.image_folder import make_dataset
 from PIL import Image
 import random
+import numpy as np
+
+import torchvision.transforms as transforms
+import torch
 
 
 class UnalignedDataset(BaseDataset):
@@ -26,8 +30,15 @@ class UnalignedDataset(BaseDataset):
         self.dir_A = os.path.join(opt.dataroot, opt.phase + 'A')  # create a path '/path/to/data/trainA'
         self.dir_B = os.path.join(opt.dataroot, opt.phase + 'B')  # create a path '/path/to/data/trainB'
 
+        print("#### data path ####")
+        print(self.dir_A)
+
         self.A_paths = sorted(make_dataset(self.dir_A, opt.max_dataset_size))   # load images from '/path/to/data/trainA'
         self.B_paths = sorted(make_dataset(self.dir_B, opt.max_dataset_size))    # load images from '/path/to/data/trainB'
+
+        print("self.A_paths: ")
+        print(self.A_paths)
+
         self.A_size = len(self.A_paths)  # get the size of dataset A
         self.B_size = len(self.B_paths)  # get the size of dataset B
         btoA = self.opt.direction == 'BtoA'
@@ -35,6 +46,8 @@ class UnalignedDataset(BaseDataset):
         output_nc = self.opt.input_nc if btoA else self.opt.output_nc      # get the number of channels of output image
         self.transform_A = get_transform(self.opt, grayscale=(input_nc == 1))   # get specified transforms for A
         self.transform_B = get_transform(self.opt, grayscale=(output_nc == 1))  # get specified transforms for B
+
+
 
     def __getitem__(self, index):
         """Return a data point and its metadata information.
@@ -68,11 +81,24 @@ class UnalignedDataset(BaseDataset):
         A_img = np.load(A_path)
         B_img = np.load(B_path)
 
+        B_img = np.reshape(B_img, (43,43,50)) # Make sure to change this to be more general or smth
 
-        print(type(A_img))
-        print(A_img)
+        # conversion to tensor first, conversion to double
+        # toTensorTransformList = []
+        # toTensorTransformList += [transforms.ToTensor()]
+        # toTensorTransform = transforms.Compose(toTensorTransformList)
+        # A_img = toTensorTransform(A_img)
+        # B_img = toTensorTransform(B_img)
 
+        A_img = torch.from_numpy(A_img)
+        B_img = torch.from_numpy(B_img)
 
+        # A_img = A_img.type(torch.DoubleTensor) 
+        # B_img = B_img.type(torch.DoubleTensor) 
+
+        print("SHAPES OF TENSOR::")
+        print(A_img.shape)
+        print(B_img.shape)
 
 
 

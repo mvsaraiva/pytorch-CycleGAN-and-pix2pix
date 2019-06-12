@@ -107,12 +107,17 @@ def get_transform(opt, params=None, grayscale=False, method=Image.BICUBIC, conve
             transform_list.append(transforms.Lambda(lambda img: __flip(img, params['flip'])))
 
     if convert:
-        transform_list += [transforms.ToTensor()] # CONVERSION TO TENSOR HERE
+
+        # transform_list += [transforms.ToTensor()] # CONVERSION TO TENSOR HERE
+        
         if grayscale:
             transform_list += [transforms.Normalize((0.5,), (0.5,))]
         else:
             # Transform normalize for 4 channels, is this right?
             transform_list += [transforms.Normalize((0.5, 0.5, 0.5, 0.5), (0.5, 0.5, 0.5, 0.5))] # -> 4 channels
+
+    print("here lies the transform list: ")
+    print(transform_list)
     return transforms.Compose(transform_list)
 
 

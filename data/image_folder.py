@@ -12,7 +12,7 @@ import os.path
 
 IMG_EXTENSIONS = [
     '.jpg', '.JPG', '.jpeg', '.JPEG',
-    '.png', '.PNG', '.ppm', '.PPM', '.bmp', '.BMP',
+    '.png', '.PNG', '.ppm', '.PPM', '.bmp', '.BMP', '.npy' # Needed to add .npy here in order to accept binaries
 ]
 
 
@@ -23,6 +23,9 @@ def is_image_file(filename):
 def make_dataset(dir, max_dataset_size=float("inf")):
     images = []
     assert os.path.isdir(dir), '%s is not a valid directory' % dir
+
+    print("make_dataset debuggin: ")
+
 
     for root, _, fnames in sorted(os.walk(dir)):
         for fname in fnames:
